@@ -42,12 +42,13 @@ x <- 1:20
 w <- -1 + sqrt(x)/2
 y = x + rnorm(x)*w
 
-plot(x,y)
+#plot(x,y)
 
 #-- create a matrix with x in 1st column and y in 2nd.
 matxy <- matrix(c(x,y), nrow = 20, ncol = 2)
 
 #-- exporting data --
+#  http://www.statmethods.net/input/exportingdata.html
 write.table(matxy, "mydaya.txt", sep="\t")
 
 #-- Make a nonparametric local regression function
@@ -57,3 +58,17 @@ lines(x, lrf$y)
 #-- linear regression
 fm <- lm(y~x, data.frame(x,y))
 abline(coef(fm), lty = 3)
+
+#-- read data from a tabular format text like:
+#  id,sex,ht,wt,fat,sbp,dbp,tc,hdlc,tg,fbs,ha1c,got,gpt,ggt
+#  1,f,159.1,58.1,32.1,116,64,259,54,284,96,4.8,14,29,39
+# .....
+#  https://sites.google.com/site/webtextofr/data
+data = read.delim("demodata.csv", sep=",", header=TRUE)
+
+#-- pick up a pair of columns from data and plot them
+plot(data$ht, data$wt)
+
+#  For a pair of a category variable and a quantity variable,
+# R automatically creates a box plot
+plot (data$sex, data$ht)

@@ -22,6 +22,10 @@
 # containing SciTEUser.properties.
 # https://groups.google.com/forum/#!topic/scite-interest/lIHZfsrnaXA
 
+#  To install packages, type chooseCRANmirror() and a mirror site.
+#  To reflect the proxy setting, ' --internet2' option is needed when R is run
+#  http://www7b.biglobe.ne.jp/~homunculus/r/rproxy.html
+
 # practice with a lecture note from:
 # https://sites.google.com/site/webtextofr/home
 
@@ -38,11 +42,21 @@
 # x <- rnorm(50)
 # y <- rnorm(x)
 
+library(ggplot2)
+
 x <- 1:20
 w <- -1 + sqrt(x)/2
 y = x + rnorm(x)*w
 
-#plot(x,y)
+#-- create a new graphic frame --
+frame()
+
+#-- create data frame and plot it by ggplot2
+# http://stackoverflow.com/questions/6675066/ggplots-qplot-does-not-execute-on-sourcing
+xydata = data.frame(xlabel = x, ylabel = y)
+#g = ggplot(xydata, aes(x,y)) 
+#g + geom_point()
+plot(xydata$xlabel, xydata$ylabel)
 
 #-- create a matrix with x in 1st column and y in 2nd.
 matxy <- matrix(c(x,y), nrow = 20, ncol = 2)
@@ -55,7 +69,7 @@ write.table(matxy, "mydaya.txt", sep="\t")
 lrf <- lowess(x,y)
 lines(x, lrf$y)
 
-#-- linear regression
+#-- linear regression; To see the result, summary(fm)
 fm <- lm(y~x, data.frame(x,y))
 abline(coef(fm), lty = 3)
 
@@ -66,9 +80,25 @@ abline(coef(fm), lty = 3)
 #  https://sites.google.com/site/webtextofr/data
 data = read.delim("demodata.csv", sep=",", header=TRUE)
 
+#-- pick up male and female data
+mdata = data[data$sex == 'm', ]
+fdata = data[data$sex == 'f', ]
+
+#-- To combine multiple plots into one overall graph, use par()
+# http://www.statmethods.net/advgraphs/layout.html
+par(mfrow = c(2,2))
+
 #-- pick up a pair of columns from data and plot them
-plot(data$ht, data$wt)
+attach(data)
+plot(ht[ht <= 160 & wt <= 60], wt[ht <= 160 & wt <= 60])
 
 #  For a pair of a category variable and a quantity variable,
-# R automatically creates a box plot
+# R automatically creates a box plots
 plot (data$sex, data$ht)
+
+# histgram
+hist(tg, breaks=20)
+
+# http://kangaete.hatenablog.com/entry/2013/09/11/222608
+#g = ggplot(data, aes(x=sex, y=ht, fill=sex))
+#print (g + geom_boxplot())

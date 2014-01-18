@@ -43,6 +43,8 @@
 # y <- rnorm(x)
 
 library(ggplot2)
+library(grid)
+library(gridExtra)
 
 x <- 1:20
 w <- -1 + sqrt(x)/2
@@ -90,15 +92,23 @@ par(mfrow = c(2,2))
 
 #-- pick up a pair of columns from data and plot them
 attach(data)
-plot(ht[ht <= 160 & wt <= 60], wt[ht <= 160 & wt <= 60])
+#plot(ht[ht <= 160 & wt <= 60], wt[ht <= 160 & wt <= 60])
+g1 <-
+ggplot(data, aes(x=ht, y=wt)) + geom_point()
 
 #  For a pair of a category variable and a quantity variable,
 # R automatically creates a box plots
-plot (data$sex, data$ht)
+#plot (data$sex, data$ht)
+g2 <- ggplot(data, aes(x=sex, y=ht, fill=sex)) + geom_boxplot()
 
-# histgram
-hist(tg, breaks=20)
+# histogram
+#hist(tg, breaks=20)
+g3 <- ggplot(data, aes(x=tg)) + geom_histogram(binwidth=20)
 
 # http://kangaete.hatenablog.com/entry/2013/09/11/222608
 #g = ggplot(data, aes(x=sex, y=ht, fill=sex))
 #print (g + geom_boxplot())
+
+# Multiple plots in one page
+# http://rstudio-pubs-static.s3.amazonaws.com/2852_379274d7c5734f979e106dcf019ec46c.html
+grid.arrange(g1,g2,g3,ncol = 2)
